@@ -3,6 +3,7 @@ name: swot-analysis
 description: Evidence-grounded SWOT analysis engine -- takes persona extraction output, signal scan data, format research, and market hypothesis, then produces a brutally honest Strengths/Weaknesses/Opportunities/Threats analysis with verdict (proceed/pivot/kill), risk registry, and moat assessment. Use when stress-testing a product hypothesis before committing to a build spec.
 license: MIT
 metadata:
+  context: fork
   openclaw:
     emoji: "\U0001F50D"
 ---
@@ -16,7 +17,7 @@ Transform upstream pipeline data into an evidence-grounded SWOT analysis that st
 Before doing ANYTHING, read the shared conventions file:
 
 ```
-Read /Users/peleke/Documents/Projects/skills/skills/custom/_conventions.md
+Read ${SKILLS_DIR}/_conventions.md
 ```
 
 This file defines: canonical vault path, folder-to-type mapping, frontmatter contract, valid statuses, tag hierarchy, cross-reference syntax, and the PipelineEnvelope schema. All output from this skill MUST conform to those conventions. If there is a conflict between this SKILL.md and `_conventions.md`, the conventions file wins.
@@ -455,7 +456,7 @@ signal_scan_ref: "{signal-scan-slug}"
 Both output files are written to the Obsidian vault (iCloud-synced):
 
 ```
-/Users/peleke/Library/Mobile Documents/iCloud~md~obsidian/Documents/ClawTheCurious/Admin/Product-Discovery/SWOT/
+${VAULT}/Admin/Product-Discovery/SWOT/
 ```
 
 - Filename format: `{domain-slug}-{YYYY-MM-DD}.md` and `{domain-slug}-{YYYY-MM-DD}.json`

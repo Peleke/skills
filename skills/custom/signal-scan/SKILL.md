@@ -3,6 +3,7 @@ name: signal-scan
 description: Product signal scanner -- identifies market opportunities by analyzing pain points, demand, spend, sentiment, competitive landscape, and audience signals across Reddit, social media, course marketplaces, and other sources. Use when scanning a domain for product opportunities, running a market analysis, or identifying what to build and sell next.
 license: MIT
 metadata:
+  context: fork
   openclaw:
     emoji: "\U0001F4E1"
 ---
@@ -16,7 +17,7 @@ Systematically scan a domain for product opportunities by collecting, normalizin
 Before doing ANYTHING, read the shared conventions file:
 
 ```
-Read /Users/peleke/Documents/Projects/skills/skills/custom/_conventions.md
+Read ${SKILLS_DIR}/_conventions.md
 ```
 
 This file defines: canonical vault path, folder-to-type mapping, frontmatter contract, valid statuses, tag hierarchy, cross-reference syntax, and the PipelineEnvelope schema. All output from this skill MUST conform to those conventions. If there is a conflict between this SKILL.md and `_conventions.md`, the conventions file wins.
@@ -197,7 +198,7 @@ The meta-signal is not a summary of individual signals. It is the insight that t
 
 The scan produces two files, saved to the Obsidian vault:
 
-**Vault path:** `/Users/peleke/Library/Mobile Documents/iCloud~md~obsidian/Documents/ClawTheCurious/Admin/Product-Discovery/Signal-Scans/`
+**Vault path:** `${VAULT}/Admin/Product-Discovery/Signal-Scans/`
 
 ### 1. JSON Scan: `{vault}/Admin/Product-Discovery/Signal-Scans/signal-scan-[domain-slug]-[date].json`
 
