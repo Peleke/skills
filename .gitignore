@@ -2,4 +2,6 @@
 __pycache__/
 .idea/
 .vscode/
+.playwright-mcp/
+*.log
 
