@@ -1,13 +1,11 @@
 ---
 name: content-planner
 description: >
-  Scans recent GitHub activity AND buildlog entries across repos, synthesizes
-  engineering work into publishable content opportunities with fan-out analysis,
-  and outputs an Obsidian-compatible content plan (kanban board + instrumented briefs).
-  Use when the user wants to plan content, update their content calendar, generate
-  writing ideas from recent engineering work, or populate their Obsidian vault with
-  content tasks. Invoked via /content-planner or when user asks about content
-  scheduling, writing plans, or "what should I write about."
+  Scan GitHub activity and buildlog entries, synthesize engineering work into
+  publishable content opportunities with fan-out analysis, and output an
+  Obsidian-compatible content plan (kanban board + instrumented briefs). Use when
+  planning content, updating the content calendar, or generating writing ideas
+  from recent engineering work.
 metadata:
   openclaw:
     emoji: "\U0001F4F0"
@@ -24,7 +22,7 @@ Generate a content plan from recent engineering work. Scan GitHub repos + buildl
 Before doing ANYTHING, read the shared conventions file:
 
 ```
-Read /Users/peleke/Documents/Projects/skills/skills/custom/_conventions.md
+Read ${SKILLS_DIR}/_conventions.md
 ```
 
 This file defines: canonical vault path, folder-to-type mapping, frontmatter contract, valid statuses, tag hierarchy, cross-reference syntax, and the PipelineEnvelope schema. All output from this skill MUST conform to those conventions. If there is a conflict between this SKILL.md and `_conventions.md`, the conventions file wins.
@@ -36,19 +34,19 @@ This file defines: canonical vault path, folder-to-type mapping, frontmatter con
 Run the Python scan script to collect GH data AND buildlog entries:
 
 ```bash
-python3 /Users/peleke/Documents/Projects/skills/skills/custom/content-planner/scripts/scan_repos.py --days 14 --format summary
+python3 ${SKILLS_DIR}/content-planner/scripts/scan_repos.py --days 14 --format summary
 ```
 
 For JSON output (when you need structured data for processing):
 
 ```bash
-python3 /Users/peleke/Documents/Projects/skills/skills/custom/content-planner/scripts/scan_repos.py --days 14 --format json
+python3 ${SKILLS_DIR}/content-planner/scripts/scan_repos.py --days 14 --format json
 ```
 
 To scan specific repos only:
 
 ```bash
-python3 /Users/peleke/Documents/Projects/skills/skills/custom/content-planner/scripts/scan_repos.py --days 14 --repos "/path/to/repo1,/path/to/repo2"
+python3 ${SKILLS_DIR}/content-planner/scripts/scan_repos.py --days 14 --repos "/path/to/repo1,/path/to/repo2"
 ```
 
 Key repos to always scan (in priority order):
@@ -131,7 +129,7 @@ For each opportunity, extract:
 Before generating output, check if a content plan already exists:
 
 ```bash
-ls "/Users/peleke/Library/Mobile Documents/iCloud~md~obsidian/Documents/ClawTheCurious/Writing/"
+ls "${VAULT}/Writing/"
 ```
 
 If `Content-Plan.kanban.md` or `Content-Briefs/` already exist, UPDATE them rather than overwriting. Append new opportunities, mark completed items, adjust priorities.
@@ -268,7 +266,7 @@ Apply these to every content opportunity before including it:
 
 The vault is at:
 ```
-/Users/peleke/Library/Mobile Documents/iCloud~md~obsidian/Documents/ClawTheCurious
+${VAULT}
 ```
 
 Content plan goes in `Writing/`. Briefs go in `Writing/Content-Briefs/`.
