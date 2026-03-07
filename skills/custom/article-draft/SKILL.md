@@ -195,6 +195,107 @@ With all the above internalized, draft in this order:
 
 ---
 
+---
+
+## Review Mode
+
+When reviewing an existing draft (not drafting from scratch), run these passes in order. Output a structured review report.
+
+### Pass 1: Bragi Scan
+
+Search the entire draft for violations of the 20 prose rules. For each violation found, output:
+
+```
+[BRAGI] Line ~N: "<offending text>"
+  Rule: <rule name>
+  Fix: <specific rewrite>
+```
+
+Priority order: em dashes first (easiest to grep), then blocklist words, then structural patterns.
+
+### Pass 2: SPIN Audit
+
+Identify where each SPIN phase lives in the current draft. Report:
+
+```
+[SPIN] Situation: lines N-M (or MISSING)
+[SPIN] Problem: lines N-M (or MISSING)
+[SPIN] Implication: lines N-M (or MISSING)
+[SPIN] Need-Payoff: lines N-M (or MISSING)
+[SPIN] Solution first appears: line N — BEFORE/AFTER Implication
+```
+
+If the solution appears before Implication, flag it as a structural problem.
+
+### Pass 3: Engagement Audit
+
+Check for required engagement elements:
+
+```
+[ENGAGE] Named protagonist: YES/NO — first appears line N
+[ENGAGE] Protagonist reappears: N times (need 3+)
+[ENGAGE] Circular close: YES/NO
+[ENGAGE] Code before formula: YES/NO (or N/A)
+[ENGAGE] "Holy shit" data points: N found (need 1+ per section)
+```
+
+### Pass 4: Voice Analysis
+
+Sample 5 representative paragraphs. For each, identify the register (A/B/C/mixed) and flag:
+- Adjacent paragraphs with same register (monotone risk)
+- Paragraphs blending all three registers (muddy voice)
+- Sections where register doesn't match content type (e.g., Register B on architecture walkthrough)
+
+### Pass 5: Visual Injection Opportunities
+
+For articles that will include visuals, identify:
+
+```
+[VISUAL] Line ~N: "<claim or data point>"
+  Type: chart / screenshot / SVG / d3.js / code block
+  What it should show: <description>
+  Caption draft: <one sentence>
+```
+
+Also flag: sections longer than 500 words with no visual break.
+
+### Pass 6: Staleness Check
+
+Flag any claims that reference specific numbers, tool counts, PR counts, test counts, or version numbers. These go stale fast.
+
+```
+[STALE?] Line ~N: "<claim>"
+  Verify: <what to check and where>
+```
+
+### Review Output Format
+
+```markdown
+# Article Review: <title>
+
+## Summary
+- Bragi violations: N
+- SPIN structure: OK / NEEDS WORK
+- Engagement score: N/5 required elements
+- Voice consistency: OK / ISSUES
+- Visual opportunities: N identified
+- Staleness risks: N flagged
+
+## Critical (fix before publish)
+<items>
+
+## Major (fix for quality)
+<items>
+
+## Minor (nice to have)
+<items>
+
+## Suggested visual injection points
+<items>
+```
+
+---
+
 ## Anti-patterns (things this skill prevents)
 
 - "Let me explain the architecture" opening (Register C without a war story setup = lecture)
