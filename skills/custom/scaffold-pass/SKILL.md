@@ -59,7 +59,7 @@ Look for these patterns in the content to identify designed failure opportunitie
 
 ### Examples
 
-**Tokenizer (Raschka Ch2):**
+**Tokenizer (from an LLM textbook):**
 ```python
 # Designed failure: SimpleTokenizerV1 has no <unk> token
 tokenizer = SimpleTokenizerV1(vocab)
@@ -144,7 +144,7 @@ When a system has multiple interacting components, show the **whole system first
 5. After each replacement, re-run to verify integration
 ```
 
-### Example (from Raschka Ch4)
+### Example (from an LLM textbook)
 
 ```python
 # Step 1: Full GPT architecture with dummies

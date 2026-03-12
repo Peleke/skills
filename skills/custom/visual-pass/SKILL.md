@@ -94,7 +94,7 @@ For each detected opportunity, record:
 | 3 | Section 5, matplotlib scatter | Per-entry scatter with salience scores | Type 3 | High | Plotly conversion — hover shows entry name and task |
 ```
 
-### The Raschka Rule (Progressive Architecture Reveals)
+### The Progressive Reveal Rule
 
 When scanning for Type 1 (static diagram) opportunities in multi-section content, do NOT plan a single "big picture" diagram that shows the entire system. Instead, plan a series of incremental reveals:
 
@@ -124,7 +124,7 @@ Transform the raw scan output into a structured opportunity map. Group related o
 ### Grouping Rules
 
 1. **Same-section, same-type opportunities merge.** If a section has three separate signals for Type 1 (static diagram), they likely belong to a single diagram, not three separate ones.
-2. **Raschka families are one logical unit.** A progressive reveal series counts as ONE diagram toward the budget, not N separate diagrams.
+2. **Reveal families are one logical unit.** A progressive reveal series counts as ONE diagram toward the budget, not N separate diagrams.
 3. **Type 3 (interactive chart) overlaps with engagement-pass.** If engagement-pass will handle Plotly conversions, mark Type 3 opportunities as "delegate to engagement-pass" and do not include them in the visual-pass manifest. Visual-pass owns Type 3 ONLY when engagement-pass is not being run.
 4. **Type 5 (expected output) never conflicts.** These are always additive and low-cost.
 
@@ -144,11 +144,12 @@ Transform the raw scan output into a structured opportunity map. Group related o
 ## Visual Opportunity Map: [Artifact Title]
 
 ### Type 1: Static Diagrams
-- [ ] **[ID-1]** Section 2: Encoder architecture (Raschka family, 4 variants)
+- [ ] **[ID-1]** Section 2: Encoder architecture (reveal family, 4 variants)
   - Tool: inline-svg-architecture-diagrams
   - Components: embedding, attention, projection, output
   - Style: CSS-var (notebook) / hand-drawn (article)
   - Dependencies: none
+  - Intent: detected
 
 ### Type 2: Animations
 - [ ] **[ID-2]** Section 4: Training loop convergence
@@ -156,6 +157,7 @@ Transform the raw scan output into a structured opportunity map. Group related o
   - Shows: loss curve building up frame by frame
   - Dependencies: training loop code cell must exist
   - Note: check if engagement-pass claims this
+  - Intent: detected
 
 ### Type 6: Before/After
 - [ ] **[ID-3]** Section 6: Naive vs. vectorized performance
@@ -163,6 +165,7 @@ Transform the raw scan output into a structured opportunity map. Group related o
   - Left: naive output (45s, high memory)
   - Right: vectorized output (0.3s, low memory)
   - Dependencies: both code cells must run
+  - Intent: detected
 
 ### Delegated to engagement-pass
 - Section 5 scatter plot → Plotly conversion (engagement-pass)
@@ -179,7 +182,7 @@ Apply budgets, rank by impact, and produce the final ordered plan.
 
 | Visual Type | Min | Max | Required? | Notes |
 |------------|-----|-----|-----------|-------|
-| Type 1: Static Diagrams | 2 | 6 | Yes (min 2) | Raschka families count as 1 |
+| Type 1: Static Diagrams | 2 | 6 | Yes (min 2) | Reveal families count as 1 |
 | Type 2: Animations | 0 | 2 | No | Expensive; only where static fails |
 | Type 3: Interactive Charts | 0 | 4 | No | Only if engagement-pass not running |
 | Type 4: Manim Videos | 0 | 1 | No | Arc-level, not module-level; max 1 per arc |
@@ -225,16 +228,19 @@ Total visuals: 10
    - Render with: inline-svg-architecture-diagrams (CSS-var style)
    - 4 progressive variants, inject at Sections 2, 3, 5, 7
    - Highlight current component per variant
+   - Intent: specified | Assignee: inline-svg skill
 
 2. **[ID-5]** Training output verification (Type 5, impact: 75)
    - Render with: direct cell output capture
    - Show expected output after training loop cell
+   - Intent: specified | Assignee: self (direct insertion)
 
 ### Priority 2 (should have)
 3. **[ID-3]** Naive vs. vectorized comparison (Type 6, impact: 60)
    - Render with: CSS grid side-by-side panel
    - Left panel: naive timings + memory usage
    - Right panel: vectorized timings + memory usage
+   - Intent: specified | Assignee: self
 
 ### Priority 3 (nice to have)
 4. **[ID-7]** Hero image for notebook header (Type 7, impact: 30)
@@ -242,6 +248,7 @@ Total visuals: 10
    - Prompt: "Technical illustration of neural network encoder architecture, clean minimalist style, dark background, purple accent lighting"
    - Style: digital_art
    - Output: header-hero.png
+   - Intent: specified | Assignee: comfyui_mcp
 
 ### Cut (over budget)
 - [ID-4] Attention mechanism animation (Type 2, impact: 25) — over animation budget
@@ -251,7 +258,9 @@ Total visuals: 10
 
 ## Phase 4: Manifest Output
 
-Transform the injection plan into rendering-tool-specific instructions. Each manifest entry is a complete specification that the rendering tool can execute without additional context.
+Transform the injection plan into **visual intents** — self-contained briefs that carry both the creative specification ("what this should be") and the rendering instructions ("how to produce it"). Each intent is a complete specification that a rendering tool, external artist, or future pass can execute without additional context.
+
+Every manifest entry is an intent. On the first visual-pass, all intents are `specified` — fully described but not yet rendered. Resolution happens later (see Phase 5).
 
 ### Manifest Entry: Type 1 (Static Diagram)
 
@@ -261,6 +270,10 @@ type: static_diagram
 tool: inline-svg-architecture-diagrams
 inject_at: Section 2, after paragraph 3
 style: css-var  # or: hand-drawn
+intent:
+  status: specified        # detected | specified | commissioned | rendered | injected
+  assignee: inline-svg     # who/what resolves: tool name, "designer", "self", "deferred"
+  resolution_notes: null   # filled when resolved — path to asset, commit ref, or "skip" reason
 spec:
   layers:
     - id: embedding
@@ -287,9 +300,11 @@ spec:
       label_left: "context"
   highlight_layer: embedding
   caption: "The encoder's first layer: embedding converts tokens to vectors. Attention and projection (grayed) come next."
-  raschka_family: encoder-arch
+  reveal_family: encoder-arch
   variant: 1/3
 ```
+
+**All manifest entries carry the `intent` block.** The `spec` provides the full rendering brief; the `intent` tracks the lifecycle. Subsequent examples show `intent` in abbreviated form.
 
 ### Manifest Entry: Type 2 (Animation)
 
@@ -298,6 +313,7 @@ visual_id: ID-2
 type: animation
 tool: funcanimation
 inject_at: Section 4, after code cell 7
+intent: { status: specified, assignee: self, resolution_notes: null }
 spec:
   what_animates: "Loss curve building up over training epochs"
   x_data: epoch numbers (1 to N)
@@ -319,6 +335,7 @@ visual_id: ID-4
 type: manim_video
 tool: manim_mcp
 inject_at: Section 6, after "the attention mechanism transforms the input space"
+intent: { status: specified, assignee: manim_mcp, resolution_notes: null }
 spec:
   scene_description: |
     Show a 3D vector space with 5 input vectors (colored dots).
@@ -342,6 +359,7 @@ visual_id: ID-5
 type: expected_output
 tool: direct_insertion
 inject_at: Section 4, after code cell 8 (the training loop)
+intent: { status: specified, assignee: self, resolution_notes: null }
 spec:
   format: code_block  # or: terminal_screenshot, inline_text
   content: |
@@ -360,6 +378,7 @@ visual_id: ID-3
 type: before_after
 tool: css_grid  # or: plotly_subplots, juxtapose_js
 inject_at: Section 6, replacing the two separate output cells
+intent: { status: specified, assignee: self, resolution_notes: null }
 spec:
   layout: side_by_side  # or: stacked, slider
   left:
@@ -387,6 +406,7 @@ visual_id: ID-7
 type: comfyui_image
 tool: comfyui_mcp
 inject_at: Cell 1 (notebook header) or article hero position
+intent: { status: specified, assignee: comfyui_mcp, resolution_notes: null }
 spec:
   mcp_tool: imagine  # or: generate_image, stylize_photo, generate_with_controlnet
   description: "Technical illustration of a neural network encoder, clean minimalist style, layers of processing shown as translucent geometric planes stacked vertically, data flowing upward as light particles, dark background with purple and blue accent lighting"
@@ -405,6 +425,107 @@ spec:
     - No generic "brain with circuits" cliche
     - No stock-photo aesthetic
   fallback_if_unavailable: "Skip hero image; use the first Type 1 diagram as the visual anchor instead"
+```
+
+---
+
+## Phase 5: Intent Resolution
+
+Visual-pass produces intents, not finished visuals. Resolution is a separate step — it can happen immediately, incrementally, or not at all.
+
+### The Intent Lifecycle
+
+```
+detected → specified → commissioned → rendered → injected
+    ↑          ↑            ↑             ↑          ↑
+  Phase 1   Phase 4    Resolution    Resolution  Final
+  (scan)   (manifest)   (external)    (tool)     (insert)
+```
+
+| Status | Meaning | Who Sets It |
+|--------|---------|-------------|
+| `detected` | Signal found during content scan; not yet fully specified | Phase 1 (opportunity map) |
+| `specified` | Full intent brief written: spec + rendering instructions + assignee | Phase 4 (manifest output) |
+| `commissioned` | Intent sent to an external tool, artist, or queue for production | Resolution step |
+| `rendered` | Asset exists (file path, embed code, or cell output) but not yet placed in content | Resolution step |
+| `injected` | Asset placed at `inject_at` location in the content artifact | Final insertion step |
+
+### Resolution Methods
+
+| Method | When to Use | Flow |
+|--------|-------------|------|
+| **Immediate** | Tool is available in this session (e.g., inline-svg skill, direct insertion) | `specified → rendered → injected` in one pass |
+| **Deferred** | Tool unavailable or asset needs human review | `specified → (wait)` — revisit in a later session |
+| **Commissioned** | External artist, design tool, or async pipeline | `specified → commissioned → (wait for delivery) → rendered → injected` |
+| **Generated (subsequent pass)** | Re-run visual-pass after new tools become available | `specified → (re-run visual-pass) → rendered → injected` |
+
+### Incremental Resolution
+
+Intents can be resolved **one at a time, in any order**. The manifest tracks each intent's status independently. A partially-resolved manifest is a normal state — not an error.
+
+Typical workflows:
+
+1. **All-at-once**: every available tool resolves its intents in one session.
+2. **Cherry-pick**: resolve the 3 highest-priority intents now, defer the rest.
+3. **Commission batch**: export all Type 7 (ComfyUI) intents as briefs for an image pipeline, resolve Type 1 and Type 5 immediately.
+4. **Progressive enrichment**: first pass resolves Type 5 (expected output) and Type 1 (static diagrams). Second pass adds Type 2 (animations). Third pass commissions Type 7 (hero images).
+
+### Re-run Behavior
+
+When visual-pass is re-run on content that already has a manifest:
+
+1. **Skip resolved intents.** If `intent.status == injected`, the visual already exists in the content. Do not duplicate.
+2. **Update stale intents.** If the content changed since the intent was specified, re-evaluate the spec. Flag changes.
+3. **Detect new opportunities.** New content may introduce new signals. Add new intents at `detected` status.
+4. **Promote deferred intents.** If a previously unavailable tool is now available, update the assignee and flag for resolution.
+
+### Commission Brief Format
+
+When commissioning an intent externally (to a designer, an image pipeline, or a separate MCP session), export the intent as a standalone brief:
+
+```markdown
+## Visual Brief: [visual_id]
+
+**Type:** [visual type name]
+**For:** [artifact title], [inject_at location]
+**Priority:** [1/2/3 from injection plan]
+
+### What It Should Show
+[human-readable description extracted from the spec]
+
+### Rendering Guidance
+- **Tool suggestion:** [tool from manifest]
+- **Style:** [style from spec]
+- **Dimensions/constraints:** [from spec]
+- **Anti-patterns:** [from spec, if any]
+
+### Acceptance Criteria
+- [ ] Shows [key elements from spec]
+- [ ] Matches color palette (suite shared: #2196F3, #FF9800, #4CAF50, #E91E63, #9C27B0)
+- [ ] Has static fallback (for Types 2, 3, 4)
+- [ ] Does not contain text (for Type 7)
+- [ ] Caption provided: "[caption from spec]"
+
+### Context
+[1-2 sentences about what the reader is learning at this point in the content]
+```
+
+### Manifest Summary Table
+
+After the full manifest, produce a summary showing intent status across the artifact:
+
+```markdown
+## Intent Summary: [Artifact Title]
+
+| ID | Type | Priority | Assignee | Status | Asset Path |
+|----|------|----------|----------|--------|------------|
+| ID-1 | Static Diagram | P1 | inline-svg | specified | — |
+| ID-2 | Animation | P2 | self | specified | — |
+| ID-3 | Before/After | P2 | self | specified | — |
+| ID-5 | Expected Output | P1 | self | rendered | — |
+| ID-7 | ComfyUI Image | P3 | comfyui_mcp | specified | — |
+
+Resolved: 0/5 | Commissioned: 0/5 | Pending: 5/5
 ```
 
 ---
@@ -446,12 +567,12 @@ Verify the manifest covers all high-confidence signals from the content:
 [TOOLS] Entries with unavailable tools: [list with fallback status]
 ```
 
-### Pass 4: Raschka Coherence
+### Pass 4: Progressive Reveal Coherence
 
 For every diagram family using progressive reveals:
 
 ```
-[RASCHKA] Family "[name]": N variants planned
+[REVEAL] Family "[name]": N variants planned
   Variant 1: shows [components], highlights [component] — Section N: OK
   Variant 2: shows [components], highlights [component] — Section M: OK
   ...
@@ -480,6 +601,16 @@ For each manifest entry, verify the spec is complete enough for the rendering to
 [RENDER] [ID-2] Type 2 via FuncAnimation: data source identified: NO — INCOMPLETE (need to specify which cell outputs to animate)
 ```
 
+### Pass 7: Intent Status Audit
+
+```
+[INTENT] Total intents: N
+[INTENT] Status breakdown: specified: N, commissioned: N, rendered: N, injected: N
+[INTENT] Stale intents (content changed since spec): [list or "none"]
+[INTENT] Deferred intents with now-available tools: [list or "none"]
+[INTENT] Commission briefs exported: N (Type 7: N, Type 4: N, etc.)
+```
+
 ### Review Output Format
 
 ```markdown
@@ -489,9 +620,10 @@ For each manifest entry, verify the spec is complete enough for the rendering to
 - Signal coverage: N/M high-confidence signals addressed
 - Budget compliance: OK / N violations
 - Tool availability: N/N tools available
-- Raschka coherence: N families, all sequential: YES/NO
+- Progressive reveal coherence: N families, all sequential: YES/NO
 - Engagement-pass coordination: N delegated, 0 conflicts
 - Rendering readiness: N/N entries ready
+- Intent resolution: N/N intents resolved
 
 ## Critical (blocks rendering)
 <items>
@@ -545,7 +677,7 @@ Before approving any Type 2, 4, or 7 visual (the expensive ones), ask: **"Does a
 3. **Manim for everything.** Manim videos are high-production, high-cost anchor content. One per arc, maximum. Using Manim for something FuncAnimation handles is like renting a crane to hang a picture frame.
 4. **ComfyUI as clip art.** Generated images are for hero/anchor positions only. Do not sprinkle AI-generated illustrations throughout the content as decoration. Two maximum per artifact.
 5. **Ignoring engagement-pass territory.** If engagement-pass is also running on this artifact, visual-pass must NOT generate Plotly conversion instructions. Duplicate instructions from two skills cause confusion. Delegate clearly.
-6. **One giant architecture diagram.** The Raschka rule exists for a reason. A single diagram showing the entire system teaches less than 4 progressive reveals showing one component at a time. The reader builds the mental model; the diagram does not pre-load it.
+6. **One giant architecture diagram.** The progressive reveal rule exists for a reason. A single diagram showing the entire system teaches less than 4 progressive reveals showing one component at a time. The reader builds the mental model; the diagram does not pre-load it.
 7. **Visuals before the concept is earned.** Following the DO→NOTICE→CODE→NAME contract: diagrams go AFTER the reader has experienced the component, not before. A diagram that shows all three layers before the reader has built the first one violates the pedagogical model.
 8. **No static fallback for dynamic content.** Every animation, interactive chart, and Manim video must have a static fallback specified in the manifest. Content degrades to PDF, nbconvert, and print. Visuals that vanish in static rendering are not production-ready.
 9. **Overriding the content author's flow.** Visual-pass injects visuals alongside existing content. It does NOT restructure sections, reorder cells, or rewrite prose. The narrative flow is sacred. If a visual requires restructuring to work, flag it as a "requires content edit" note, do not execute the restructuring.
@@ -592,11 +724,13 @@ article-draft ────→ ──┘        │
 **Visual-pass produces:**
 - Visual opportunity map (all detected signals, grouped and deduplicated)
 - Prioritized injection plan (budgeted, ranked, with cut list)
-- Rendering manifest (tool-specific specs per visual, ready for execution)
+- **Intent manifest** (self-contained briefs per visual — spec + rendering guidance + lifecycle status)
+- Intent summary table (status dashboard across all intents)
 - Delegation list (opportunities handed to engagement-pass)
+- Commission briefs (exportable specs for external production, when applicable)
 
 **Visual-pass does NOT produce:**
-- Rendered visuals (that is the rendering tools' job)
+- Rendered visuals (rendering tools and commissioned artists resolve intents)
 - Prose rewrites (that is the content skill's job)
 - Interactive widgets (that is engagement-pass's job)
 - Restructured content (narrative flow is sacred)
@@ -618,7 +752,7 @@ article-draft ────→ ──┘        │
 - [ ] Medium-confidence signals evaluated for static failure test
 - [ ] Low-confidence signals evaluated conservatively (when in doubt, skip)
 - [ ] False positives filtered ("in other words", simple rephrasing, etc.)
-- [ ] Raschka rule applied: multi-section architectures planned as progressive reveal families
+- [ ] Progressive reveal rule applied: multi-section architectures planned as reveal families
 
 ### Phase 2 (opportunity map)
 - [ ] Related opportunities merged (same section, same type)
@@ -636,7 +770,8 @@ article-draft ────→ ──┘        │
 - [ ] Cut list documented with reasons
 
 ### Phase 4 (manifest output)
-- [ ] Every manifest entry has: visual_id, type, tool, inject_at, spec
+- [ ] Every manifest entry has: visual_id, type, tool, inject_at, intent, spec
+- [ ] Every entry has intent block with status, assignee, resolution_notes
 - [ ] Every Type 1 entry has: layers, connections, style, caption
 - [ ] Every Type 2 entry has: what_animates, frame_count, show_static_first, static_fallback
 - [ ] Every Type 4 entry has: scene_description, duration, style, static_fallback
@@ -645,14 +780,22 @@ article-draft ────→ ──┘        │
 - [ ] Every dynamic visual (Types 2, 3, 4) has a static fallback specified
 - [ ] No manifest entry requires content restructuring (inject alongside, not replace)
 - [ ] Delegation list complete (all engagement-pass handoffs documented)
+- [ ] Intent summary table produced with status dashboard
+
+### Phase 5 (intent resolution)
+- [ ] Resolution method chosen per intent (immediate / deferred / commissioned / subsequent pass)
+- [ ] Commission briefs exported for externally-resolved intents
+- [ ] Acceptance criteria defined in each brief
+- [ ] Re-run behavior: resolved intents not duplicated, stale intents flagged
 
 ### Review mode
 - [ ] Coverage audit: all high-confidence signals addressed
 - [ ] Budget compliance: no type exceeds maximum
 - [ ] Tool availability: fallbacks specified for unavailable tools
-- [ ] Raschka coherence: progressive reveal families are sequential and complete
+- [ ] Progressive reveal coherence: reveal families are sequential and complete
 - [ ] Engagement-pass coordination: no conflicts, delegations clear
 - [ ] Rendering feasibility: every entry has enough spec detail to execute
+- [ ] Intent status audit: all intents tracked, stale intents flagged, deferred intents reviewed
 
 ### Voice and pedagogy (inherited from suite)
 - [ ] No visual placed before the concept it depicts is earned (DO→NOTICE→CODE→NAME)
