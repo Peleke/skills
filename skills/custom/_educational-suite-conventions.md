@@ -16,13 +16,15 @@ The suite produces teaching content: tutorials, lessons, notebooks, assessments.
 
 | Skill | Role | Reads From | Produces |
 |-------|------|------------|----------|
-| `lesson-generator` | Curriculum design at 3 zoom levels (course/arc/module) | Elicitation interview | Curriculum brief, arc syllabi, module specs |
+| `lesson-generator` | Core pedagogy: DO→NOTICE→CODE→NAME, belt system, zoom levels, voice | Elicitation interview | Curriculum brief, arc syllabi, module specs |
 | `outline-writer` | Narrative outlines through structured riffing | Prior module notebook, arc syllabus | Ready-to-generate outline |
 | `notebook-builder` | Mechanical .ipynb generation | Approved outline | Jupyter notebook |
-| `engagement-pass` | Retrofit static notebooks with interactivity | Existing notebook | Enhanced notebook |
-| `technical-tutorial` | Draft standalone tutorials with dual arc | Topic brief, war stories, prerequisite inventory | Tutorial article + companion artifact |
-| `assessment-generator` | Tiered evaluation at 6 cognitive levels | Tutorial output or module outline, misconception log | Assessment document + rubrics |
-| `article-draft` | Draft technical articles with narrative structure | Editorial map, war stories, voice target | Article |
+| `scaffold-pass` | Architectural scaffolding: designed failures, skeleton-first, accumulation artifacts, reading strategies, troubleshooting, bonus depth | Notebook or outline | Scaffolded content |
+| `visual-pass` | Visual injection planning: static diagrams, animations, Manim, expected output, before/after | Any content artifact | Prioritized visual manifest + rendered assets |
+| `engagement-pass` | Interactive retrofit: Plotly, widgets, concept maps, video embeds, build-a-toy | Existing notebook | Enhanced notebook |
+| `technical-tutorial` | Standalone tutorials with dual arc (SPIN + DO→NOTICE→CODE→NAME) | Topic brief, war stories, prerequisite inventory | Tutorial article + companion artifact |
+| `assessment-generator` | 6-tier evaluation with Socratic follow-ups and misconception logging | Tutorial output or module outline, misconception log | Assessment document + rubrics |
+| `article-draft` | Technical articles with narrative structure (SPIN arc, no pedagogy loop) | Editorial map, war stories, voice target | Article |
 
 ---
 
@@ -104,15 +106,22 @@ Rules:
 ### Pipeline flows
 
 ```
-lesson-generator ──→ outline-writer ──→ notebook-builder ──→ engagement-pass
-                                                    ↓
-                                          assessment-generator
+lesson-generator ──→ outline-writer ──→ notebook-builder
+                                              ↓
+                                        scaffold-pass (designed failures, skeleton-first, accumulation)
+                                              ↓
+                                         visual-pass (diagrams, animations, Manim, expected output)
+                                              ↓
+                                        engagement-pass (Plotly, widgets, concept maps, videos)
+                                              ↓
+                                        assessment-generator (6-tier evaluation, Socratic follow-ups)
 
-technical-tutorial ──→ assessment-generator
-                  └──→ engagement-pass (if artifact is a notebook)
+technical-tutorial ──→ scaffold-pass ──→ visual-pass ──→ assessment-generator
 
-article-draft ──→ (no downstream educational skill; articles don't teach)
+article-draft ──→ visual-pass (diagrams only; no pedagogy pipeline)
 ```
+
+Each skill in the pipeline reads the output of the prior skill. Skills can be run independently (e.g., engagement-pass on an existing notebook) but the full pipeline ensures nothing is missed.
 
 ### Handoff contract
 
@@ -180,6 +189,8 @@ All suite skills use the same three registers:
 | `assessment-generator` | 10 | 20 | 70 | Questions need clarity above all; Tour Guide dominates |
 | `outline-writer` | N/A | N/A | N/A | Outlines are internal artifacts; voice applies at generation time |
 | `notebook-builder` | N/A | N/A | N/A | Inherits from the outline it's building from |
+| `scaffold-pass` | N/A | N/A | N/A | Structural pass; does not generate prose |
+| `visual-pass` | N/A | N/A | N/A | Produces manifests and renders; does not generate narrative prose |
 | `engagement-pass` | N/A | N/A | N/A | Preserves existing voice; does not change register |
 
 ### Universal voice rules

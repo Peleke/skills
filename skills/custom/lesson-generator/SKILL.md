@@ -29,7 +29,7 @@ This is not a narrative suggestion — it's a structural requirement. The loop a
 
 | Stage | What Happens | Modality |
 |-------|-------------|----------|
-| **DO** | Experience it. Hear it, see it, interact with it. No labels yet. | All available senses |
+| **DO** | Experience it. Hear it, see it, interact with it. No labels yet. See `scaffold-pass` for the **designed failure variant**. | All available senses |
 | **NOTICE** | Guided observation. "What did you notice?" Pattern recognition prompts. | Reflective |
 | **CODE** | Build/modify/express. Change parameters, break it, make something with it. | Tactile/code |
 | **NAME** | Now formalize. Give it its proper name, connect to theory, define it. | Symbolic |
@@ -161,6 +161,24 @@ Before producing the outline, riff with the user:
 4. **Jargon inventory**: "What terms need to be earned? What can we assume?"
 
 This is collaborative. The outline emerges from conversation, not from the arc syllabus alone.
+
+---
+
+## Pipeline Integration
+
+This skill defines core pedagogy. Downstream skills handle specialized concerns:
+
+```
+lesson-generator (this skill: pedagogy, voice, zoom levels, belt system)
+    → outline-writer (narrative outlines, starting state, war stories)
+    → notebook-builder (mechanical .ipynb generation)
+    → scaffold-pass (designed failures, skeleton-first, accumulation artifacts, reading strategy, troubleshooting)
+    → visual-pass (static diagrams, animations, Manim, expected output, before/after)
+    → engagement-pass (Plotly, ipywidgets, concept maps, video embeds, build-a-toy)
+    → assessment-generator (6-tier evaluation, Socratic follow-ups, misconception log)
+```
+
+All skills share conventions from `_educational-suite-conventions.md`.
 
 ---
 
