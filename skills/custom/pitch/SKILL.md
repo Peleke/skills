@@ -24,7 +24,7 @@ This file defines: canonical vault path, folder-to-type mapping, frontmatter con
 ## Pipeline Position
 
 ```
-signal-scan -> decision-log -> persona-extract -> swot-analysis -> offer-scope -> **pitch** -> hunter-log
+signal-scan -> decision-log -> persona-extract -> swot-analysis -> offer-scope -> positioning -> **pitch** -> hunter-log
 ```
 
 This skill consumes the output of `offer-scope`, `persona-extract`, `swot-analysis`, `decision-log`, and `signal-scan`, and feeds into `hunter-log` for execution tracking. The pitch output is the complete "go live" package -- everything needed to launch the product.
@@ -147,8 +147,9 @@ Before starting, the following must be available:
 1. **Offer-scope output** -- A completed offer-scope result containing: product name, format, price, value equation, build spec, positioning (headline, subheadline, bullet points, objection handlers, social proof angle, guarantee), distribution plan, revenue model, and kill criteria
 2. **Persona extraction output** -- The persona used by offer-scope, containing: pain stories (with situation/pain/workaround/emotional state/evidence), decision triggers, objections, willingness-to-pay data, and channel behavior
 3. **SWOT analysis output** -- The SWOT for this hypothesis, containing: validated strengths, key weaknesses, opportunities, threats, risk registry, and moat assessment
-4. **Decision log entry** -- The decision record for the chosen opportunity
-5. **Signal scan data** -- The original signal scan with PAIN, SPEND, COMPETITIVE, and AUDIENCE signals
+4. **Positioning output** (optional, recommended) -- If a positioning skill run exists, its output becomes the PRIMARY source for: landing page headline (from messaging hierarchy lead message), problem section (from competitive alternatives), copy anti-rules (from anti-messaging). When positioning output is available, use it instead of offer-scope Phase 5 positioning. If no positioning output exists, fall back to offer-scope positioning as before.
+5. **Decision log entry** -- The decision record for the chosen opportunity
+6. **Signal scan data** -- The original signal scan with PAIN, SPEND, COMPETITIVE, and AUDIENCE signals
 
 If any of these are missing, prompt the user to run the upstream skill first or provide the data manually. The pitch skill is a synthesis layer -- it assembles and refines upstream outputs into execution-ready materials, not a research layer.
 
@@ -219,11 +220,22 @@ interface PitchInput {
     modifications: string[]
     moat_assessment: { current_strength: string, timeline: object }
   }
+  positioning?: {
+    lead_message: string                // headline source (overrides offer.positioning.headline)
+    category_frame: string              // subheadline / positioning line
+    primary_hook: string                // above-the-fold emotional hook
+    anti_messaging: { phrase: string, use_instead: string }[]  // copy rules
+    competitive_alternatives: string[]  // problem section source
+    icp_title: string                   // copy targeting
+    first_conversation_moats: string[]  // credibility claims
+    positioning_canvas_ref: string      // artifact slug for cross-reference
+  }
   domain: string
   opportunity: string
   offer_ref: string
   persona_ref: string
   swot_ref: string
+  positioning_ref?: string  // slug of the positioning-canvas artifact
   decision_ref: string
   signal_scan_ref: string
 }

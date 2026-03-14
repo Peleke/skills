@@ -56,6 +56,10 @@ Every document type maps to exactly one folder. This is the "table" in our vault
 | Persona | `Admin/Product-Discovery/Personas/` | `persona-extract` |
 | SWOT Analysis | `Admin/Product-Discovery/SWOT/` | `swot-analysis` |
 | Offer Spec | `Admin/Product-Discovery/Offers/` | `offer-scope` |
+| Positioning Canvas | `Admin/Product-Discovery/Positioning/` | `positioning` |
+| Messaging Hierarchy | `Admin/Product-Discovery/Positioning/` | `positioning` |
+| ICP Profile | `Admin/Product-Discovery/Positioning/` | `positioning` |
+| Competitive Landscape | `Admin/Product-Discovery/Positioning/` | `positioning` |
 | Pitch | `Admin/Product-Discovery/Pitches/` | `pitch` |
 | Community Pitch | `Admin/Product-Discovery/Offers/` | `community-pitch` |
 | Skool Pitch | `Admin/Product-Discovery/Offers/` | `skool-pitch` |
@@ -86,7 +90,9 @@ Every document MUST have YAML frontmatter with AT MINIMUM these fields:
 ### Required (all types)
 ```yaml
 type: string        # one of: signal-scan | decision | persona | swot-analysis |
-                    # offer-spec | pitch | community-pitch | skool-pitch |
+                    # offer-spec | positioning-canvas | messaging-hierarchy |
+                    # icp-profile | competitive-landscape |
+                    # pitch | community-pitch | skool-pitch |
                     # session | content-brief | wild-index | lead |
                     # conversation | draft | research-note
 date: YYYY-MM-DD    # creation date
@@ -103,6 +109,10 @@ tags: string[]      # MUST include hunter/{type} or content/{type} at minimum
 | persona | `complete`, `partial` |
 | swot-analysis | `complete`, `partial` |
 | offer-spec | `spec`, `building`, `shipped`, `killed` |
+| positioning-canvas | `complete`, `partial` |
+| messaging-hierarchy | `complete`, `partial` |
+| icp-profile | `complete`, `partial` |
+| competitive-landscape | `complete`, `partial` |
 | pitch | `draft`, `review`, `final`, `shipped` |
 | community-pitch | `spec`, `building`, `launched`, `killed` |
 | skool-pitch | `spec`, `building`, `launched`, `killed` |
@@ -125,6 +135,7 @@ hunter/
 ├── persona           # all persona research
 ├── swot              # all SWOT analyses
 ├── offer             # all offer specs
+├── positioning        # all positioning artifacts
 ├── pitch             # all pitches (go-to-market packages)
 ├── community         # all community pitches
 ├── skool             # all Skool-specific pitches
@@ -226,7 +237,7 @@ This is the vault-as-database pattern:
 ## Pipeline Data Flow
 
 ```
-signal-scan ──→ decision-log ──→ persona-extract ──→ swot-analysis ──→ offer-scope ──→ pitch ──→ one-pager ──→ hunter-log
+signal-scan ──→ decision-log ──→ persona-extract ──→ swot-analysis ──→ offer-scope ──→ positioning ──→ pitch ──→ one-pager ──→ hunter-log
                                         │                                    │
                                         │                              community-pitch ──→ hunter-log
                                         │                              skool-pitch ──→ hunter-log
@@ -263,6 +274,7 @@ Skills that perform extensive web search or analysis SHOULD declare `context: fo
 | swot-analysis | Yes | 4-quadrant research |
 | reddit-harvest | Yes | Playwright session |
 | offer-scope | No | Reads upstream, no search |
+| positioning | Yes | Competitive alternatives + category validation |
 | pitch | No | Generates from data |
 | hunter-log | No | Pure I/O |
 
@@ -306,6 +318,7 @@ The Pipeline kanban tracks every product idea from scan to shipped/killed. Skill
 ### Skills That Do NOT Move the Card
 
 - `swot-analysis`: runs between persona and offer, does not advance the pipeline stage (card stays in "Persona Researched")
+- `positioning`: runs between offer-scope and pitch, does not advance the pipeline stage (card stays in "Offer Scoped")
 - `pitch`: the pitch generates launch materials but does not mean the operator has committed to launching. Card stays in "Offer Scoped" until the operator sets a launch date and moves it to "Building" manually.
 - `content-planner`: operates on a separate content pipeline, does not touch the product discovery kanban
 
@@ -327,7 +340,7 @@ Friday:    operator moves      "- [ ] [[pitch-ref|DevOps Decision Kit ($29)]] �
 Every skill output wraps in:
 ```json
 {
-  "skill": "signal-scan | decision-log | persona-extract | swot-analysis | offer-scope | pitch | one-pager | community-pitch | skool-pitch | content-planner",
+  "skill": "signal-scan | decision-log | persona-extract | swot-analysis | offer-scope | positioning | pitch | one-pager | community-pitch | skool-pitch | content-planner",
   "version": "1.0",
   "session_id": "session-YYYY-MM-DD-NNN",
   "timestamp": "ISO 8601",
@@ -341,6 +354,7 @@ Every skill output wraps in:
 ## Prose Quality Gate
 
 **MANDATORY**: Any skill that produces prose content (landing page copy, launch posts, README copy, email sequences, content briefs, pitch summaries) MUST run `buildlog_gauntlet` with the **Bragi** persona and **ALL rules** before finalizing output. This applies to:
+- `positioning` (Phase 6 emotional hooks, messaging hierarchy)
 - `pitch` (Phases 1, 2, 3b, 4)
 - `community-pitch` / `skool-pitch` (all copy sections)
 - `content-planner` (content briefs and drafts)
